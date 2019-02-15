@@ -15,6 +15,7 @@
 @property (weak, nonatomic) FSCalendar *calendar;
 
 @property (weak, nonatomic) UILabel *titleLabel;
+@property (weak, nonatomic) UILabel *yearLabel;
 
 @property (strong, nonatomic) NSDate *month;
 
