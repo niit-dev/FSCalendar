@@ -243,10 +243,6 @@ IB_DESIGNABLE
 @interface FSCalendar : UIView
 
 /**
- * This bool variable is to detect long press gesture on calender.
- */
-@property (readonly, nonatomic) BOOL isLongPressGesture;
-/**
  * The object that acts as the delegate of the calendar.
  */
 @property (weak, nonatomic) IBOutlet id<FSCalendarDelegate> delegate;

@@ -80,7 +80,6 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 @property (strong, nonatomic) FSCalendarDelegationProxy  *delegateProxy;
 
 @property (strong, nonatomic) NSIndexPath *lastPressedIndexPath;
-@property (strong, nonatomic) NSIndexPath *currentSelectedIndexPath;
 @property (strong, nonatomic) NSMapTable *visibleSectionHeaders;
 
 - (void)orientationDidChange:(NSNotification *)notification;
@@ -213,7 +212,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     collectionView.backgroundColor = [UIColor clearColor];
     collectionView.pagingEnabled = YES;
     collectionView.showsHorizontalScrollIndicator = NO;
-    collectionView.showsVerticalScrollIndicator = YES;
+    collectionView.showsVerticalScrollIndicator = NO;
     collectionView.allowsMultipleSelection = NO;
     collectionView.clipsToBounds = YES;
     [collectionView registerClass:[FSCalendarCell class] forCellWithReuseIdentifier:FSCalendarDefaultCellReuseIdentifier];
@@ -231,8 +230,6 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     self.calculator = [[FSCalendarCalculator alloc] initWithCalendar:self];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
-    
-    //[self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:14 inSection:0] atScrollPosition:UICollectionViewScrollPositionNone animated:YES];
     
 }
 
@@ -490,8 +487,6 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     [self enqueueSelectedDate:selectedDate];
     [self.delegateProxy calendar:self didSelectDate:selectedDate atMonthPosition:monthPosition];
     [self selectCounterpartDate:selectedDate];
-    // Reset the value of property for LongPressGesture
-    _isLongPressGesture = NO;
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldDeselectItemAtIndexPath:(NSIndexPath *)indexPath
@@ -726,7 +721,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     if (self.floatingMode || [self isDateInDifferentPage:currentPage]) {
         currentPage = [self.gregorian dateBySettingHour:0 minute:0 second:0 ofDate:currentPage options:0];
         if ([self isPageInRange:currentPage]) {
-            [self scrollToPageForDate:currentPage animated:YES];
+            [self scrollToPageForDate:currentPage animated:animated];
         }
     }
 }
@@ -960,15 +955,14 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 
 - (UILongPressGestureRecognizer *)swipeToChooseGesture
 {
-    
     if (!_swipeToChooseGesture) {
         UILongPressGestureRecognizer *pressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeToChoose:)];
         pressGesture.enabled = NO;
         pressGesture.numberOfTapsRequired = 0;
         pressGesture.numberOfTouchesRequired = 1;
-        pressGesture.minimumPressDuration = 0.5;
+        pressGesture.minimumPressDuration = 0.7;
         [self.daysContainer addGestureRecognizer:pressGesture];
-        //[self.collectionView.panGestureRecognizer requireGestureRecognizerToFail:pressGesture];
+        [self.collectionView.panGestureRecognizer requireGestureRecognizerToFail:pressGesture];
         _swipeToChooseGesture = pressGesture;
     }
     return _swipeToChooseGesture;
@@ -1108,14 +1102,14 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
         if (self.selectedDate && !self.allowsMultipleSelection) {
             [self deselectDate:self.selectedDate];
         }
-        [_collectionView selectItemAtIndexPath:targetIndexPath animated:YES scrollPosition:UICollectionViewScrollPositionNone];
+        [_collectionView selectItemAtIndexPath:targetIndexPath animated:NO scrollPosition:UICollectionViewScrollPositionNone];
         FSCalendarCell *cell = (FSCalendarCell *)[_collectionView cellForItemAtIndexPath:targetIndexPath];
         [cell performSelecting];
         [self enqueueSelectedDate:targetDate];
         [self selectCounterpartDate:targetDate];
         
     } else if (![_collectionView.indexPathsForSelectedItems containsObject:targetIndexPath]) {
-        [_collectionView selectItemAtIndexPath:targetIndexPath animated:YES scrollPosition:UICollectionViewScrollPositionNone];
+        [_collectionView selectItemAtIndexPath:targetIndexPath animated:NO scrollPosition:UICollectionViewScrollPositionNone];
     }
     
     if (scrollToDate) {
@@ -1136,7 +1130,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 
 - (void)scrollToDate:(NSDate *)date
 {
-    [self scrollToDate:date animated:YES];
+    [self scrollToDate:date animated:NO];
 }
 
 - (void)scrollToDate:(NSDate *)date animated:(BOOL)animated
@@ -1152,11 +1146,11 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     if (!self.floatingMode) {
         switch (_collectionViewLayout.scrollDirection) {
             case UICollectionViewScrollDirectionVertical: {
-                [_collectionView setContentOffset:CGPointMake(0, scrollOffset * _collectionView.fs_height) animated:YES];
+                [_collectionView setContentOffset:CGPointMake(0, scrollOffset * _collectionView.fs_height) animated:animated];
                 break;
             }
             case UICollectionViewScrollDirectionHorizontal: {
-                [_collectionView setContentOffset:CGPointMake(scrollOffset * _collectionView.fs_width, 0) animated:YES];
+                [_collectionView setContentOffset:CGPointMake(scrollOffset * _collectionView.fs_width, 0) animated:animated];
                 break;
             }
         }
@@ -1164,8 +1158,8 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     } else if (self.hasValidateVisibleLayout) {
         [_collectionViewLayout layoutAttributesForElementsInRect:_collectionView.bounds];
         CGRect headerFrame = [_collectionViewLayout layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader atIndexPath:[NSIndexPath indexPathForItem:0 inSection:scrollOffset]].frame;
-        CGPoint targetOffset = CGPointMake(0, MIN(headerFrame.origin.y+150,MAX(0,_collectionViewLayout.collectionViewContentSize.height-_collectionView.fs_bottom)));
-        [_collectionView setContentOffset:targetOffset animated:YES];
+        CGPoint targetOffset = CGPointMake(0, MIN(headerFrame.origin.y,MAX(0,_collectionViewLayout.collectionViewContentSize.height-_collectionView.fs_bottom)));
+        [_collectionView setContentOffset:targetOffset animated:animated];
     }
     if (!animated) {
         self.calendarHeaderView.scrollOffset = scrollOffset;
@@ -1202,9 +1196,9 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
             }
             [self didChangeValueForKey:@"currentPage"];
         }
-        [self scrollToDate:_currentPage animated:YES];
+        [self scrollToDate:_currentPage animated:animated];
     } else {
-        [self scrollToDate:[self.gregorian fs_firstDayOfMonth:date] animated:YES];
+        [self scrollToDate:[self.gregorian fs_firstDayOfMonth:date] animated:animated];
     }
 }
 
@@ -1423,8 +1417,6 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     switch (pressGesture.state) {
         case UIGestureRecognizerStateBegan:
         case UIGestureRecognizerStateChanged: {
-            //Set this bool varibale to true so that we can identify long pressed on calendar cell
-            _isLongPressGesture = YES;
             NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint:[pressGesture locationInView:self.collectionView]];
             if (indexPath && ![indexPath isEqual:self.lastPressedIndexPath]) {
                 NSDate *date = [self.calculator dateForIndexPath:indexPath];
