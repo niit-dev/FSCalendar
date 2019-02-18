@@ -1164,7 +1164,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     } else if (self.hasValidateVisibleLayout) {
         [_collectionViewLayout layoutAttributesForElementsInRect:_collectionView.bounds];
         CGRect headerFrame = [_collectionViewLayout layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader atIndexPath:[NSIndexPath indexPathForItem:0 inSection:scrollOffset]].frame;
-        CGPoint targetOffset = CGPointMake(0, MIN(headerFrame.origin.y+150,MAX(0,_collectionViewLayout.collectionViewContentSize.height-_collectionView.fs_bottom)));
+        CGPoint targetOffset = CGPointMake(0, MIN(headerFrame.origin.y,MAX(0,_collectionViewLayout.collectionViewContentSize.height-_collectionView.fs_bottom)));
         [_collectionView setContentOffset:targetOffset animated:YES];
     }
     if (!animated) {

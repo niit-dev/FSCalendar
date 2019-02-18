@@ -128,13 +128,11 @@
     NSRange rangeValue = [monthString.uppercaseString rangeOfString:self.titleLabel.text options:NSCaseInsensitiveSearch];
     if (rangeValue.length > 0 && [yearString isEqualToString:year])
     {
-        NSLog(@"string contains hello");
         self.yearLabel.hidden = NO;
         self.yearLabel.text = year;
     }
     else
     {
-        NSLog(@"string does not contain hello!");
         self.yearLabel.hidden = YES;
     }
 }
