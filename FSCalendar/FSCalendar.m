@@ -234,6 +234,14 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
         
         //[self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:14 inSection:0] atScrollPosition:UICollectionViewScrollPositionNone animated:YES];
         
+        //:
+        self.currentPage = self.today;
+        NSDate* newDate = [self.today dateByAddingTimeInterval:(30*24*60*60)];
+//        [self selectDate:newDate scrollToDate:NO];
+        NSIndexPath *targetIndexPath = [self.calculator indexPathForDate:newDate];
+        [_collectionView selectItemAtIndexPath:targetIndexPath animated:NO scrollPosition:UICollectionViewScrollPositionNone];
+        FSCalendarCell *cell = (FSCalendarCell *)[_collectionView cellForItemAtIndexPath:targetIndexPath];
+        
     }
     
 - (void)dealloc
