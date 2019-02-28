@@ -11,14 +11,14 @@
 @class FSCalendar,FSCalendarAppearance;
 
 @interface FSCalendarStickyHeader : UICollectionReusableView
-    
-    @property (weak, nonatomic) FSCalendar *calendar;
-    
-    @property (weak, nonatomic) UILabel *titleLabel;
-    @property (weak, nonatomic) UILabel *yearLabel;
-    
-    @property (strong, nonatomic) NSDate *month;
-    
+
+@property (weak, nonatomic) FSCalendar *calendar;
+
+@property (weak, nonatomic) UILabel *titleLabel;
+@property (weak, nonatomic) UILabel *yearLabel;
+
+@property (strong, nonatomic) NSDate *month;
+
 - (void)configureAppearance;
-    
-    @end
+
+@end
