@@ -494,6 +494,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     [self selectCounterpartDate:selectedDate];
     // Reset the value of property for LongPressGesture
     _isLongPressGesture = NO;
+    cell.titleLabel.textColor = UIColor.whiteColor;
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldDeselectItemAtIndexPath:(NSIndexPath *)indexPath

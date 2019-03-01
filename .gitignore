@@ -31,3 +31,6 @@ fastlane/report.xml
 fastlane/screenshots
 
 Index/
+FSCalendarExamples.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+Example-Swift/FSCalendarSwiftExample.xcodeproj/project.pbxproj
+Example-Objc/FSCalendar.xcodeproj/project.pbxproj
