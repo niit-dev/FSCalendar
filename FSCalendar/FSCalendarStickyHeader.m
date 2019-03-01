@@ -77,7 +77,7 @@
     
     _bottomBorder.frame = CGRectMake(0, _contentView.fs_height-weekdayHeight-weekdayMargin*2, _contentView.fs_width, 0.0); //height 0.0 to hide the separator between month and weekdays
     //    _titleLabel.frame = CGRectMake(0, _bottomBorder.fs_bottom-titleHeight-weekdayMargin, titleWidth,titleHeight);
-    _titleLabel.frame = CGRectMake(16.0, _bottomBorder.fs_bottom-titleHeight-weekdayMargin, titleWidth-200.0,titleHeight);
+    _titleLabel.frame = CGRectMake(3.0, _bottomBorder.fs_bottom-titleHeight-weekdayMargin, titleWidth-200.0,titleHeight);
     _yearLabel.frame = CGRectMake(titleWidth-(16.0+200.0), _bottomBorder.fs_bottom-titleHeight-weekdayMargin, 200.0,titleHeight);
     
 }
@@ -128,12 +128,13 @@
     NSRange rangeValue = [monthString.uppercaseString rangeOfString:self.titleLabel.text options:NSCaseInsensitiveSearch];
     if (rangeValue.length > 0 && [yearString isEqualToString:year])
     {
-        self.yearLabel.hidden = NO;
-        self.yearLabel.text = year;
+        self.yearLabel.hidden = YES;
+        self.titleLabel.hidden = YES;
     }
     else
     {
         self.yearLabel.hidden = YES;
+        self.titleLabel.hidden = NO;
     }
 }
 

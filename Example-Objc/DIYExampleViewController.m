@@ -85,15 +85,20 @@
     self.dateFormatter = [[NSDateFormatter alloc] init];
     self.dateFormatter.dateFormat = @"yyyy-MM-dd";
     
-    [self.calendar selectDate:[self.gregorian dateByAddingUnit:NSCalendarUnitDay value:-1 toDate:[NSDate date] options:0] scrollToDate:NO];
-    [self.calendar selectDate:[NSDate date] scrollToDate:NO];
-    [self.calendar selectDate:[self.gregorian dateByAddingUnit:NSCalendarUnitDay value:1 toDate:[NSDate date] options:0] scrollToDate:NO];
+//    self.currentPage = self.today;
+    NSDate* newDate = [[NSDate date] dateByAddingTimeInterval:(30*24*60*60)];
+   // [self selectDate:newDate scrollToDate:NO];
+    
+//    [self.calendar selectDate:[self.gregorian dateByAddingUnit:NSCalendarUnitDay value:-1 toDate:[NSDate date] options:0] scrollToDate:NO];
+    [self.calendar selectDate:newDate scrollToDate:NO];
+//    [self.calendar selectDate:[self.gregorian dateByAddingUnit:NSCalendarUnitDay value:1 toDate:[NSDate date] options:0] scrollToDate:NO];
     
     // Uncomment this to perform an 'initial-week-scope'
     // self.calendar.scope = FSCalendarScopeWeek;
     
     // For UITest
     self.calendar.accessibilityIdentifier = @"calendar";
+    
 }
 
 - (void)dealloc
