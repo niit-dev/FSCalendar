@@ -499,6 +499,9 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     [self enqueueSelectedDate:selectedDate];
     [self.delegateProxy calendar:self didSelectDate:selectedDate atMonthPosition:monthPosition];
     [self selectCounterpartDate:selectedDate];
+    
+    // Reset the value of property for LongPressGesture
+    _isLongPressGesture = NO;
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldDeselectItemAtIndexPath:(NSIndexPath *)indexPath
@@ -1498,12 +1501,14 @@ cell.SEL1 = DEFAULT; \
     switch (pressGesture.state) {
         case UIGestureRecognizerStateBegan:
         case UIGestureRecognizerStateChanged: {
+            //Set this bool varibale to true so that we can identify long pressed on calendar cell
+            _isLongPressGesture = YES;
             NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint:[pressGesture locationInView:self.collectionView]];
             if (indexPath && ![indexPath isEqual:self.lastPressedIndexPath]) {
                 NSDate *date = [self.calculator dateForIndexPath:indexPath];
                 FSCalendarMonthPosition monthPosition = [self.calculator monthPositionForIndexPath:indexPath];
                 if (![self.selectedDates containsObject:date] && [self collectionView:self.collectionView shouldSelectItemAtIndexPath:indexPath]) {
-                    [self selectDate:date scrollToDate:YES atMonthPosition:monthPosition];
+                    [self selectDate:date scrollToDate:NO atMonthPosition:monthPosition];
                     [self collectionView:self.collectionView didSelectItemAtIndexPath:indexPath];
                 } else if (self.collectionView.allowsMultipleSelection && [self collectionView:self.collectionView shouldDeselectItemAtIndexPath:indexPath]) {
                     [self deselectDate:date];
@@ -1516,6 +1521,7 @@ cell.SEL1 = DEFAULT; \
         case UIGestureRecognizerStateEnded:
         case UIGestureRecognizerStateCancelled: {
             self.lastPressedIndexPath = nil;
+            _isLongPressGesture = FALSE;
             break;
         }
         default:
