@@ -524,6 +524,9 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     cell.selected = NO;
     [cell configureAppearance];
     
+    //3.0
+     cell.titleLabel.textColor = UIColor.blackColor;
+    
     [_selectedDates removeObject:selectedDate];
     [self.delegateProxy calendar:self didDeselectDate:selectedDate atMonthPosition:monthPosition];
     [self deselectCounterpartDate:selectedDate];
