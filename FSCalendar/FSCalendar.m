@@ -1176,12 +1176,12 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
                 NSCalendar *calendar = [NSCalendar currentCalendar];
                 NSDateComponents *dateComponent = [calendar components:(NSCalendarUnitWeekOfMonth) fromDate: firstDate];
                 NSLog(@"%@",dateComponent);
-                height = 37 * (int)dateComponent.weekOfMonth + 40;
+                height = 37 * (int)dateComponent.weekOfMonth + 37;
             }else{
                 NSCalendar *calendar = [NSCalendar currentCalendar];
                 NSDateComponents *dateComponent = [calendar components:(NSCalendarUnitWeekOfMonth) fromDate: [NSDate date]];
                 NSLog(@"%@",dateComponent);
-                height = 37 * (int)dateComponent.weekOfMonth+40;
+                height = 37 * (int)dateComponent.weekOfMonth + 37;
             }
             _isFreshInitialization = false;
         }
