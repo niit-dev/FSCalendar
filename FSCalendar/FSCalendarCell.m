@@ -58,12 +58,6 @@
     [self.contentView addSubview:label];
     self.titleLabel = label;
     
-    label = [[UILabel alloc] initWithFrame:CGRectZero];
-    label.textAlignment = NSTextAlignmentCenter;
-    label.textColor = [UIColor lightGrayColor];
-    [self.contentView addSubview:label];
-    self.subtitleLabel = label;
-    
     shapeLayer = [CAShapeLayer layer];
     shapeLayer.backgroundColor = [UIColor clearColor].CGColor;
     shapeLayer.borderWidth = 1.0;
@@ -103,28 +97,28 @@
     }
     
     if (_subtitle) {
-        CGFloat titleHeight = self.titleLabel.font.lineHeight;
-        CGFloat subtitleHeight = self.subtitleLabel.font.lineHeight;
-        
-        CGFloat height = titleHeight + subtitleHeight;
-        _titleLabel.frame = CGRectMake(
-                                       self.preferredTitleOffset.x,
-                                       (self.contentView.fs_height*5.0/6.0-height)*0.5+self.preferredTitleOffset.y,
-                                       self.contentView.fs_width,
-                                       titleHeight
-                                       );
-        _subtitleLabel.frame = CGRectMake(
-                                          self.preferredSubtitleOffset.x,
-                                          (_titleLabel.fs_bottom-self.preferredTitleOffset.y) - (_titleLabel.fs_height-_titleLabel.font.pointSize)+self.preferredSubtitleOffset.y,
-                                          self.contentView.fs_width,
-                                          subtitleHeight
-                                          );
+//        CGFloat titleHeight = self.titleLabel.font.lineHeight;
+//        CGFloat subtitleHeight = self.subtitleLabel.font.lineHeight;
+//
+//        CGFloat height = titleHeight + subtitleHeight;
+//        _titleLabel.frame = CGRectMake(
+//                                       self.preferredTitleOffset.x,
+//                                       (self.contentView.fs_height*5.0/6.0-height)*0.5+self.preferredTitleOffset.y,
+//                                       self.contentView.fs_width,
+//                                       titleHeight
+//                                       );
+//        _subtitleLabel.frame = CGRectMake(
+//                                          self.preferredSubtitleOffset.x,
+//                                          (_titleLabel.fs_bottom-self.preferredTitleOffset.y) - (_titleLabel.fs_height-_titleLabel.font.pointSize)+self.preferredSubtitleOffset.y,
+//                                          self.contentView.fs_width,
+//                                          subtitleHeight
+//                                          );
     } else {
         _titleLabel.frame = CGRectMake(
                                        self.preferredTitleOffset.x,
                                        self.preferredTitleOffset.y,
                                        self.contentView.fs_width,
-                                       floor(self.contentView.fs_height*5.0/6.0)
+                                       floor(self.contentView.fs_height*5.0/5.0)
                                        );
     }
     
