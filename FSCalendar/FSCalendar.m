@@ -494,7 +494,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     [self selectCounterpartDate:selectedDate];
     // Reset the value of property for LongPressGesture
     _isLongPressGesture = NO;
-//    cell.titleLabel.textColor = UIColor.whiteColor;
+    //    cell.titleLabel.textColor = UIColor.whiteColor;
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldDeselectItemAtIndexPath:(NSIndexPath *)indexPath
@@ -525,7 +525,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     [cell configureAppearance];
     
     //3.0
-//     cell.titleLabel.textColor = UIColor.blackColor;
+    //     cell.titleLabel.textColor = UIColor.blackColor;
     
     [_selectedDates removeObject:selectedDate];
     [self.delegateProxy calendar:self didDeselectDate:selectedDate atMonthPosition:monthPosition];
@@ -1144,7 +1144,8 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 {
     [self scrollToDate:date animated:YES];
 }
-
+static int selectedRange = 0;
+static FSCalendarMonthPosition previousMonthPostion = FSCalendarMonthPositionNotFound;
 - (void)scrollToDate:(NSDate *)date animated:(BOOL)animated
 {
     if (!_minimumDate || !_maximumDate) {
@@ -1176,14 +1177,25 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
                 NSCalendar *calendar = [NSCalendar currentCalendar];
                 NSDateComponents *dateComponent = [calendar components:(NSCalendarUnitWeekOfMonth) fromDate: firstDate];
                 NSLog(@"%@",dateComponent);
-                height = 37 * (int)dateComponent.weekOfMonth;
+                height = 37 * (int)dateComponent.weekOfMonth ;
+                
+                NSIndexPath* selDateIndex = [self.calculator indexPathForDate:firstDate];
+                previousMonthPostion = [self.calculator monthPositionForIndexPath:selDateIndex];
             }else{
                 NSCalendar *calendar = [NSCalendar currentCalendar];
                 NSDateComponents *dateComponent = [calendar components:(NSCalendarUnitWeekOfMonth) fromDate: [NSDate date]];
                 NSLog(@"%@",dateComponent);
-                height = 37 * (int)dateComponent.weekOfMonth;
+                height = 37 * (int)dateComponent.weekOfMonth ;
             }
             _isFreshInitialization = false;
+            selectedRange = height;
+        }
+        
+        NSIndexPath* selDateIndex = [self.calculator indexPathForDate:[self.selectedDates objectAtIndex:0]];
+        FSCalendarMonthPosition monthPosition = [self.calculator monthPositionForIndexPath:selDateIndex];
+        
+        if (monthPosition == previousMonthPostion){
+            height = selectedRange;
         }
         
         [_collectionViewLayout layoutAttributesForElementsInRect:_collectionView.bounds];
