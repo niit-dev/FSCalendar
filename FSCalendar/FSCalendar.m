@@ -1191,11 +1191,25 @@ static FSCalendarMonthPosition previousMonthPostion = FSCalendarMonthPositionNot
             selectedRange = height;
         }
         
-        NSIndexPath* selDateIndex = [self.calculator indexPathForDate:[self.selectedDates objectAtIndex:0]];
-        FSCalendarMonthPosition monthPosition = [self.calculator monthPositionForIndexPath:selDateIndex];
-        
-        if (monthPosition == previousMonthPostion){
-            height = selectedRange;
+        if ([self.selectedDates count] > 0) {
+            
+            NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[NSDate date]];
+            NSInteger currentMonth = components.month;
+            
+            NSDate* selectedFirstDate = [self.selectedDates objectAtIndex:0];
+            components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:selectedFirstDate];
+            NSInteger selectedDateMonth = components.month;
+            
+            if (currentMonth == selectedDateMonth) {
+                height = selectedRange;
+            }
+        //            NSIndexPath* selDateIndex = [self.calculator indexPathForDate:[self.selectedDates objectAtIndex:0]];
+        //            FSCalendarMonthPosition monthPosition = [self.calculator monthPositionForIndexPath:selDateIndex];
+        //
+        //            if (monthPosition == previousMonthPostion){
+        //                height = selectedRange;
+        //            }
+            
         }
         
         [_collectionViewLayout layoutAttributesForElementsInRect:_collectionView.bounds];
