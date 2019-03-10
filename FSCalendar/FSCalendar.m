@@ -235,7 +235,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     
     self.isFreshInitialization = true;
     //[self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:14 inSection:0] atScrollPosition:UICollectionViewScrollPositionNone animated:YES];
-    
+    self.isDepartureDate = FALSE;
 }
 
 - (void)dealloc
@@ -443,6 +443,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
             stickyHeader.calendar = self;
             stickyHeader.month = [self.gregorian dateByAddingUnit:NSCalendarUnitMonth value:indexPath.section toDate:[self.gregorian fs_firstDayOfMonth:_minimumDate] options:0];
             self.visibleSectionHeaders[indexPath] = stickyHeader;
+            [self.delegateProxy calendarHeaderDidUpdate:self];
             [stickyHeader setNeedsLayout];
             return stickyHeader;
         }
@@ -455,11 +456,16 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     if (self.floatingMode) {
         if ([elementKind isEqualToString:UICollectionElementKindSectionHeader]) {
             self.visibleSectionHeaders[indexPath] = nil;
+            //  [self.delegateProxy calendarHeaderDidChangedToPreviosMonth:self];
+            
         }
     }
 }
 
 #pragma mark - <UICollectionViewDelegate>
+//- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section{
+//    return UIEdgeInsetsMake(0, 0, 5, 0);
+//}
 
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -494,7 +500,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     [self selectCounterpartDate:selectedDate];
     // Reset the value of property for LongPressGesture
     _isLongPressGesture = NO;
-    //    cell.titleLabel.textColor = UIColor.whiteColor;
+    //        cell.titleLabel.textColor = UIColor.whiteColor;
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldDeselectItemAtIndexPath:(NSIndexPath *)indexPath
@@ -549,9 +555,16 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 }
 
 #pragma mark - <UIScrollViewDelegate>
-
+static int lastScrollOffset = 0;
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
+    if (lastScrollOffset < scrollView.contentOffset.y) {
+        self.scrollToPreviousMonth = FALSE;
+    }else if (lastScrollOffset > scrollView.contentOffset.y){
+        self.scrollToPreviousMonth = TRUE;
+    }else{
+        self.scrollToPreviousMonth = FALSE;
+    }
     if (!self.window) return;
     if (self.floatingMode && _collectionView.indexPathsForVisibleItems.count) {
         // Do nothing on bouncing
@@ -593,6 +606,8 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
         }
         _calendarHeaderView.scrollOffset = scrollOffset;
     }
+    
+    
 }
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
@@ -642,6 +657,9 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     
 }
 
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView{
+    lastScrollOffset = scrollView.contentOffset.y;
+}
 #pragma mark - <UIGestureRecognizerDelegate>
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
@@ -1177,7 +1195,7 @@ static FSCalendarMonthPosition previousMonthPostion = FSCalendarMonthPositionNot
                 NSCalendar *calendar = [NSCalendar currentCalendar];
                 NSDateComponents *dateComponent = [calendar components:(NSCalendarUnitWeekOfMonth) fromDate: firstDate];
                 NSLog(@"%@",dateComponent);
-                height = 37 * (int)dateComponent.weekOfMonth ;
+                height = 38 * (int)dateComponent.weekOfMonth + 7;
                 
                 NSIndexPath* selDateIndex = [self.calculator indexPathForDate:firstDate];
                 previousMonthPostion = [self.calculator monthPositionForIndexPath:selDateIndex];
@@ -1185,7 +1203,7 @@ static FSCalendarMonthPosition previousMonthPostion = FSCalendarMonthPositionNot
                 NSCalendar *calendar = [NSCalendar currentCalendar];
                 NSDateComponents *dateComponent = [calendar components:(NSCalendarUnitWeekOfMonth) fromDate: [NSDate date]];
                 NSLog(@"%@",dateComponent);
-                height = 37 * (int)dateComponent.weekOfMonth ;
+                height = 38 * (int)dateComponent.weekOfMonth + 7 ;
             }
             _isFreshInitialization = false;
             selectedRange = height;
@@ -1203,12 +1221,12 @@ static FSCalendarMonthPosition previousMonthPostion = FSCalendarMonthPositionNot
             if (currentMonth == selectedDateMonth) {
                 height = selectedRange;
             }
-        //            NSIndexPath* selDateIndex = [self.calculator indexPathForDate:[self.selectedDates objectAtIndex:0]];
-        //            FSCalendarMonthPosition monthPosition = [self.calculator monthPositionForIndexPath:selDateIndex];
-        //
-        //            if (monthPosition == previousMonthPostion){
-        //                height = selectedRange;
-        //            }
+            //            NSIndexPath* selDateIndex = [self.calculator indexPathForDate:[self.selectedDates objectAtIndex:0]];
+            //            FSCalendarMonthPosition monthPosition = [self.calculator monthPositionForIndexPath:selDateIndex];
+            //
+            //            if (monthPosition == previousMonthPostion){
+            //                height = selectedRange;
+            //            }
             
         }
         
@@ -1474,10 +1492,17 @@ cell.SEL1 = DEFAULT; \
         case UIGestureRecognizerStateBegan:
         case UIGestureRecognizerStateChanged: {
             //Set this bool varibale to true so that we can identify long pressed on calendar cell
+            
             _isLongPressGesture = YES;
             NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint:[pressGesture locationInView:self.collectionView]];
             if (indexPath && ![indexPath isEqual:self.lastPressedIndexPath]) {
                 NSDate *date = [self.calculator dateForIndexPath:indexPath];
+                if(!self.isDepartureDate) {
+                    if ([self.depatureDate compare:date] == NSOrderedSame) {
+                        self.isDepartureDate = TRUE;
+                    }
+                }
+                
                 FSCalendarMonthPosition monthPosition = [self.calculator monthPositionForIndexPath:indexPath];
                 if (![self.selectedDates containsObject:date] && [self collectionView:self.collectionView shouldSelectItemAtIndexPath:indexPath]) {
                     [self selectDate:date scrollToDate:NO atMonthPosition:monthPosition];
@@ -1494,6 +1519,7 @@ cell.SEL1 = DEFAULT; \
         case UIGestureRecognizerStateCancelled: {
             self.lastPressedIndexPath = nil;
             _isLongPressGesture = FALSE;
+            self.isDepartureDate = FALSE;
             break;
         }
         default:

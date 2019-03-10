@@ -148,6 +148,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)calendarCurrentPageDidChange:(FSCalendar *)calendar;
 
+/**
+ Tells the delegate the calendar is changed the current page.
+ */
+- (void)calendarHeaderDidUpdate:(FSCalendar *)calendar;
+
+/**
+ Tells the delegate the calendar is about to change the current page.
+ */
+- (void)calendarHeaderDidChangedToPreviosMonth:(FSCalendar *)calendar;
 @end
 
 /**
@@ -259,8 +268,10 @@ IB_DESIGNABLE
 /**
  * A special mark will be put on 'today' of the calendar.
  */
-@property (nullable, strong, nonatomic) NSDate *today;
 
+@property (nullable, strong, nonatomic) NSDate *today;
+@property (nullable, strong, nonatomic) NSDate *depatureDate;
+@property (assign, nonatomic) BOOL isDepartureDate ;
 /**
  * The current page of calendar
  *
@@ -405,6 +416,11 @@ IB_DESIGNABLE
  The dates representing the selected dates. (read-only)
  */
 @property (readonly, nonatomic) NSArray<NSDate *> *selectedDates;
+
+/**
+ The bool represent the direction of scroll direction to previous month
+ */
+@property (assign, nonatomic) BOOL scrollToPreviousMonth;
 
 /**
  Reload the dates and appearance of the calendar.
