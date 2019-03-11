@@ -990,7 +990,7 @@ static int lastScrollOffset = 0;
         pressGesture.enabled = NO;
         pressGesture.numberOfTapsRequired = 0;
         pressGesture.numberOfTouchesRequired = 1;
-        pressGesture.minimumPressDuration = 0.3;
+        pressGesture.minimumPressDuration = 0.15;
         [self.daysContainer addGestureRecognizer:pressGesture];
         [self.collectionView.panGestureRecognizer requireGestureRecognizerToFail:pressGesture];
         _swipeToChooseGesture = pressGesture;
