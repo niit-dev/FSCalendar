@@ -272,6 +272,7 @@ IB_DESIGNABLE
 @property (nullable, strong, nonatomic) NSDate *today;
 @property (nullable, strong, nonatomic) NSDate *depatureDate;
 @property (assign, nonatomic) BOOL isDepartureDate ;
+@property (assign, nonatomic) int lastScrollOffset ;
 /**
  * The current page of calendar
  *

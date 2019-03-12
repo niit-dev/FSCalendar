@@ -236,6 +236,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     self.isFreshInitialization = true;
     //[self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:14 inSection:0] atScrollPosition:UICollectionViewScrollPositionNone animated:YES];
     self.isDepartureDate = FALSE;
+    self.lastScrollOffset = 0;
 }
 
 - (void)dealloc
@@ -555,17 +556,20 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 }
 
 #pragma mark - <UIScrollViewDelegate>
-static int lastScrollOffset = 0;
+//static int lastScrollOffset = 0;
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    if (lastScrollOffset < scrollView.contentOffset.y) {
+    
+    if (!self.window) return;
+    
+    if (self.lastScrollOffset < scrollView.contentOffset.y) {
         self.scrollToPreviousMonth = FALSE;
-    }else if (lastScrollOffset > scrollView.contentOffset.y){
+    }else if (self.lastScrollOffset > scrollView.contentOffset.y){
         self.scrollToPreviousMonth = TRUE;
     }else{
         self.scrollToPreviousMonth = FALSE;
     }
-    if (!self.window) return;
+    
     if (self.floatingMode && _collectionView.indexPathsForVisibleItems.count) {
         // Do nothing on bouncing
         if (_collectionView.contentOffset.y < 0 || _collectionView.contentOffset.y > _collectionView.contentSize.height-_collectionView.fs_height) {
@@ -586,6 +590,7 @@ static int lastScrollOffset = 0;
         }
         
         if (![self.gregorian isDate:currentPage equalToDate:_currentPage toUnitGranularity:NSCalendarUnitMonth]) {
+            
             [self willChangeValueForKey:@"currentPage"];
             _currentPage = currentPage;
             [self.delegateProxy calendarCurrentPageDidChange:self];
@@ -658,7 +663,7 @@ static int lastScrollOffset = 0;
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView{
-    lastScrollOffset = scrollView.contentOffset.y;
+    self.lastScrollOffset = scrollView.contentOffset.y;
 }
 #pragma mark - <UIGestureRecognizerDelegate>
 
@@ -1209,7 +1214,7 @@ static FSCalendarMonthPosition previousMonthPostion = FSCalendarMonthPositionNot
             selectedRange = height;
         }
         
-        if ([self.selectedDates count] > 0) {
+        if ([self.selectedDates count] > 0 && self.lastScrollOffset == 0) {
             
             NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[NSDate date]];
             NSInteger currentMonth = components.month;
