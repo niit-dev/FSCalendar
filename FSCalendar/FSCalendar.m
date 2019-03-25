@@ -987,21 +987,41 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     return _scopeGesture;
 }
 
-- (UILongPressGestureRecognizer *)swipeToChooseGesture
+- (UIPanGestureRecognizer *)swipeToChooseGesture
 {
     
     if (!_swipeToChooseGesture) {
-        UILongPressGestureRecognizer *pressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeToChoose:)];
+        
+        UIPanGestureRecognizer* pressGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeToChoose:)];
+        
+//        UILongPressGestureRecognizer *pressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeToChoose:)];
         pressGesture.enabled = NO;
-        pressGesture.numberOfTapsRequired = 0;
-        pressGesture.numberOfTouchesRequired = 1;
-        pressGesture.minimumPressDuration = 0.15;
+        pressGesture.minimumNumberOfTouches = 1;
+        pressGesture.maximumNumberOfTouches = 2;
+        
         [self.daysContainer addGestureRecognizer:pressGesture];
-        [self.collectionView.panGestureRecognizer requireGestureRecognizerToFail:pressGesture];
+       // [self.collectionView.panGestureRecognizer requireGestureRecognizerToFail:pressGesture];
         _swipeToChooseGesture = pressGesture;
     }
     return _swipeToChooseGesture;
 }
+
+
+//- (UILongPressGestureRecognizer *)swipeToChooseGesture
+//{
+//
+//    if (!_swipeToChooseGesture) {
+//        UILongPressGestureRecognizer *pressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeToChoose:)];
+//        pressGesture.enabled = NO;
+//        pressGesture.numberOfTapsRequired = 0;
+//        pressGesture.numberOfTouchesRequired = 1;
+//        pressGesture.minimumPressDuration = 0.15;
+//        [self.daysContainer addGestureRecognizer:pressGesture];
+//        [self.collectionView.panGestureRecognizer requireGestureRecognizerToFail:pressGesture];
+//        _swipeToChooseGesture = pressGesture;
+//    }
+//    return _swipeToChooseGesture;
+//}
 
 - (void)setDataSource:(id<FSCalendarDataSource>)dataSource
 {
@@ -1490,8 +1510,7 @@ cell.SEL1 = DEFAULT; \
     [cell configureAppearance];
 }
 
-
-- (void)handleSwipeToChoose:(UILongPressGestureRecognizer *)pressGesture
+- (void)handleSwipeToChoose:(UIPanGestureRecognizer *)pressGesture
 {
     switch (pressGesture.state) {
         case UIGestureRecognizerStateBegan:
@@ -1532,6 +1551,48 @@ cell.SEL1 = DEFAULT; \
     }
     
 }
+
+//- (void)handleSwipeToChoose:(UILongPressGestureRecognizer *)pressGesture
+//{
+//    switch (pressGesture.state) {
+//        case UIGestureRecognizerStateBegan:
+//        case UIGestureRecognizerStateChanged: {
+//            //Set this bool varibale to true so that we can identify long pressed on calendar cell
+//
+//            _isLongPressGesture = YES;
+//            NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint:[pressGesture locationInView:self.collectionView]];
+//            if (indexPath && ![indexPath isEqual:self.lastPressedIndexPath]) {
+//                NSDate *date = [self.calculator dateForIndexPath:indexPath];
+//                if(!self.isDepartureDate) {
+//                    if ([self.depatureDate compare:date] == NSOrderedSame) {
+//                        self.isDepartureDate = TRUE;
+//                    }
+//                }
+//
+//                FSCalendarMonthPosition monthPosition = [self.calculator monthPositionForIndexPath:indexPath];
+//                if (![self.selectedDates containsObject:date] && [self collectionView:self.collectionView shouldSelectItemAtIndexPath:indexPath]) {
+//                    [self selectDate:date scrollToDate:NO atMonthPosition:monthPosition];
+//                    [self collectionView:self.collectionView didSelectItemAtIndexPath:indexPath];
+//                } else if (self.collectionView.allowsMultipleSelection && [self collectionView:self.collectionView shouldDeselectItemAtIndexPath:indexPath]) {
+//                    [self deselectDate:date];
+//                    [self collectionView:self.collectionView didDeselectItemAtIndexPath:indexPath];
+//                }
+//            }
+//            self.lastPressedIndexPath = indexPath;
+//            break;
+//        }
+//        case UIGestureRecognizerStateEnded:
+//        case UIGestureRecognizerStateCancelled: {
+//            self.lastPressedIndexPath = nil;
+//            _isLongPressGesture = FALSE;
+//            self.isDepartureDate = FALSE;
+//            break;
+//        }
+//        default:
+//            break;
+//    }
+//
+//}
 
 - (void)selectCounterpartDate:(NSDate *)date
 {

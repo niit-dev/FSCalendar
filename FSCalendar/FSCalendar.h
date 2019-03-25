@@ -327,7 +327,8 @@ IB_DESIGNABLE
  *
  *    calendar.swipeToChooseGesture.enabled = YES;
  */
-@property (readonly, nonatomic) UILongPressGestureRecognizer *swipeToChooseGesture;
+//@property (readonly, nonatomic) UILongPressGestureRecognizer *swipeToChooseGesture;
+@property (readonly, nonatomic) UIPanGestureRecognizer *swipeToChooseGesture;
 
 /**
  * The placeholder type of FSCalendar. Default is FSCalendarPlaceholderTypeFillSixRows.
